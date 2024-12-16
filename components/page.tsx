@@ -14,6 +14,7 @@ import {
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { Logo } from "@/app/components/Logo";
 import { useRouter, useSearchParams } from "next/navigation";
+import { generateRandomColors } from "@/utils/colors";
 
 function PageContent() {
   const [backgroundColor, setBackgroundColor] = useState("");
@@ -23,63 +24,15 @@ function PageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const generateRandomColors = useCallback(() => {
-    const generateRandomColor = () =>
-      `#${Math.floor(Math.random() * 16777215)
-        .toString(16)
-        .padStart(6, "0")}`;
-
-    const getContrastRatio = (color1: string, color2: string) => {
-      const luminance = (color: string) => {
-        const rgb = parseInt(color.slice(1), 16);
-        const r = (rgb >> 16) & 0xff;
-        const g = (rgb >> 8) & 0xff;
-        const b = (rgb >> 0) & 0xff;
-        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-      };
-      const l1 = luminance(color1);
-      const l2 = luminance(color2);
-      return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
-    };
-
-    let backgroundColor, textColor;
-    do {
-      backgroundColor = generateRandomColor();
-      textColor = generateRandomColor();
-    } while (getContrastRatio(backgroundColor, textColor) < 4.5);
-
+  const generateRandomColorsForPage = useCallback(() => {
+    const { backgroundColor, textColor } = generateRandomColors();
     setBackgroundColor(backgroundColor);
     setTextColor(textColor);
-
-    // Update URL with new colors
     router.push(`?bg=${backgroundColor.slice(1)}&txt=${textColor.slice(1)}`);
   }, [router]);
 
-  const setInitialColors = useCallback(() => {
-    const generateRandomColor = () =>
-      `#${Math.floor(Math.random() * 16777215)
-        .toString(16)
-        .padStart(6, "0")}`;
-
-    const getContrastRatio = (color1: string, color2: string) => {
-      const luminance = (color: string) => {
-        const rgb = parseInt(color.slice(1), 16);
-        const r = (rgb >> 16) & 0xff;
-        const g = (rgb >> 8) & 0xff;
-        const b = (rgb >> 0) & 0xff;
-        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-      };
-      const l1 = luminance(color1);
-      const l2 = luminance(color2);
-      return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
-    };
-
-    let backgroundColor, textColor;
-    do {
-      backgroundColor = generateRandomColor();
-      textColor = generateRandomColor();
-    } while (getContrastRatio(backgroundColor, textColor) < 4.5);
-
+  const setInitialColorsForPage = useCallback(() => {
+    const { backgroundColor, textColor } = generateRandomColors();
     setBackgroundColor(backgroundColor);
     setTextColor(textColor);
   }, []);
@@ -92,9 +45,9 @@ function PageContent() {
       setBackgroundColor(`#${bgColor}`);
       setTextColor(`#${txtColor}`);
     } else {
-      setInitialColors();
+      setInitialColorsForPage();
     }
-  }, [searchParams, setInitialColors]);
+  }, [searchParams, setInitialColorsForPage]);
 
   useEffect(() => {
     // Set the background color of the html and body elements
@@ -105,7 +58,7 @@ function PageContent() {
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.key === "s" || event.key === "S") {
-        generateRandomColors();
+        generateRandomColorsForPage();
       }
     };
 
@@ -114,7 +67,7 @@ function PageContent() {
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
-  }, [generateRandomColors]);
+  }, [generateRandomColorsForPage]);
 
   useEffect(() => {
     const updateLogoSize = () => {
@@ -242,7 +195,7 @@ function PageContent() {
             onMouseLeave={() => setShowShortcutHint(false)}
           >
             <button
-              onClick={generateRandomColors}
+              onClick={generateRandomColorsForPage}
               className="p-2 rounded xl:p-4"
               style={{ backgroundColor: textColor, color: backgroundColor }}
             >
