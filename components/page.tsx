@@ -9,11 +9,13 @@ import {
   Trophy,
   Rocket,
   Mail,
+  Send,
 } from "lucide-react";
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { Logo } from "@/app/components/Logo";
 import { useRouter, useSearchParams } from "next/navigation";
 import { generateRandomColors } from "@/utils/colors";
+import { Confetti } from "@/components/magicui/confetti";
 
 function PageContent() {
   const [backgroundColor, setBackgroundColor] = useState("");
@@ -323,6 +325,63 @@ function PageContent() {
                   </div>
                 </div>
               ))}
+            </div>
+          </section>
+
+          <section className="mb-8 xl:mb-16">
+            <h2 className="mb-8 text-sm font-bold tracking-wide sm:text-base lg:text-lg xl:text-4xl">
+              stay in the loop
+            </h2>
+            <div
+              className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0"
+              style={{ border: `2px solid ${textColor}` }}
+            >
+              <input
+                type="email"
+                placeholder="your email"
+                className="flex-1 bg-transparent px-4 py-2 text-sm placeholder-current sm:text-base lg:text-lg xl:text-xl"
+                style={{
+                  color: textColor,
+                }}
+              />
+              <div
+                className="relative"
+                onMouseEnter={() => setShowShortcutHint(true)}
+                onMouseLeave={() => setShowShortcutHint(false)}
+              >
+                <Confetti
+                  options={{
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.7 },
+                    shapes: ["triangle"],
+                    colors: ["#26ccff", "#a25afd", "#ff5e7e"],
+                  }}
+                  manualstart={true}
+                >
+                  <button
+                    onClick={generateRandomColorsForPage}
+                    className="p-2 xl:p-4"
+                    style={{
+                      backgroundColor: textColor,
+                      color: backgroundColor,
+                    }}
+                  >
+                    <Send size={24} className="xl:h-8 xl:w-8" />
+                  </button>
+                </Confetti>
+                {showShortcutHint && (
+                  <div
+                    className="absolute right-0 mt-2 px-2 py-1 text-xs xl:text-sm"
+                    style={{
+                      backgroundColor: textColor,
+                      color: backgroundColor,
+                    }}
+                  >
+                    Press &apos;S&apos; to shuffle
+                  </div>
+                )}
+              </div>
             </div>
           </section>
         </main>
