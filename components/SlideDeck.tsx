@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { Loader2 } from "lucide-react";
 import { Slide } from "@/components/Slide";
 import { useRouter, useSearchParams } from "next/navigation";
+import { KeyboardHelp } from "@/components/KeyboardHelp";
 
 interface SlideDeckProps {
   slides: React.ReactElement[];
@@ -120,6 +121,7 @@ export function SlideDeck({ slides }: SlideDeckProps) {
             {slides[currentSlide - 1]}
           </Slide>
         </div>
+        <KeyboardHelp />
         <div
           className={`fixed bottom-2 right-2 flex items-center gap-1 rounded px-2 py-1 text-sm ${
             typedNumber
